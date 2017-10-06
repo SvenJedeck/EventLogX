@@ -21,9 +21,7 @@ Public Class ApiEventlogXWinform
     Public WithEvents     BtnNewSource As Button
     Public WithEvents BtnSourceToOther As Button
     Public WithEvents   BtnSourceToOwn As Button
-
-
-
+    Public WithEvents       BtnRefresh As Button
 
     Public Property LogName As String
     Public Property SourceName As String
@@ -40,6 +38,9 @@ Public Class ApiEventlogXWinform
         Sources.TxtSourceSelected = selectedSource
         Sources.TxtSourceWritten = ownSourceName
 
+        MyEventLogs.Refresh
+        Logs.SetDataSources
+
     End Sub
 
     Public Sub New( parentForm As Form, _
@@ -53,6 +54,9 @@ Public Class ApiEventlogXWinform
     
         Sources.TxtSourceSelected = selectedSource
         Sources.TxtSourceWritten = selectedSource
+
+        MyEventLogs.Refresh
+        Logs.SetDataSources
 
     End Sub
             Private Sub InstanceLogsAndSources(logsOwn As Object, logsOther As Object, sourcesOwn As Object, sourcesOther As Object)
@@ -123,6 +127,11 @@ Public Class ApiEventlogXWinform
     Private Sub BtnDelSource_Click(sender As Object, e As EventArgs) Handles BtnDelSource.Click
         MyEventLogs.DeleteSource(Sources.SelectedSource.Name)
         Sources.SetDataSources(Logs.SelectedLog.Name)
+    End Sub
+
+    Private Sub BtnRefresh_Click(sender As Object, e As EventArgs) Handles BtnRefresh.Click
+        MyEventLogs.Refresh
+        Logs.SetDataSources
     End Sub
 
     Public Class LogLists

@@ -161,6 +161,10 @@ Public Class EventLogsX
         sourceList.AddRange(AddingSourceList)
     End Sub ' AddSource
 
+    Public Sub Refresh()
+        SourceList.Clear : LogList = EventLogX.GetEventLogs(Me)
+    End Sub
+
     ''' <summary>
     ''' If EventLog doesn't exists, it is created. Thats why, here is no function "CreateLog". Returns: "NOTHING" on OS error and FALSE if other error. On FALSE error, EventLogsX should be new instanced.
     ''' </summary>
@@ -220,7 +224,7 @@ Public Class EventLogsX
             RegRootKey.SetValue("OwnSources", MyRegListOfOwnSources.ToArray)
 
             ' Re-Read Logs and Sources
-            SourceList.Clear : LogList = EventLogX.GetEventLogs(Me)
+            Call Refresh
 
             MyReturn = True
 

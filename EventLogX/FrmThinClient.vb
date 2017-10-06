@@ -13,9 +13,9 @@
                                                                                   .BtnLogtoOwn = BtnLogtoOwn, _
                                                                                  .BtnNewSource = BtnNewSource, _
                                                                              .BtnSourceToOther = BtnSourceToOther, _
-                                                                               .BtnSourceToOwn = BtnSourceToOwn _
+                                                                               .BtnSourceToOwn = BtnSourceToOwn , _
+                                                                                   .BtnRefresh = BtnRefresh
                                                                             }
-
    End Sub
 
 End Class

@@ -26,6 +26,7 @@ Partial Class FrmThinClient
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FrmThinClient))
         Me.LstLogsOther = New System.Windows.Forms.ListBox()
         Me.TxtLogName = New System.Windows.Forms.TextBox()
         Me.TxtSourceName = New System.Windows.Forms.TextBox()
@@ -49,6 +50,7 @@ Partial Class FrmThinClient
         Me.Label8 = New System.Windows.Forms.Label()
         Me.BtnSourceToOwn = New System.Windows.Forms.Button()
         Me.BtnSourceToOther = New System.Windows.Forms.Button()
+        Me.BtnRefresh = New System.Windows.Forms.Button()
         Me.SuspendLayout
         '
         'LstLogsOther
@@ -155,20 +157,20 @@ Partial Class FrmThinClient
         'BtnLogToOther
         '
         Me.BtnLogToOther.Image = Global.EventLogX.My.Resources.Resources.arrow_full_up_128
-        Me.BtnLogToOther.Location = New System.Drawing.Point(304, 264)
+        Me.BtnLogToOther.Location = New System.Drawing.Point(360, 264)
         Me.BtnLogToOther.Margin = New System.Windows.Forms.Padding(4)
         Me.BtnLogToOther.Name = "BtnLogToOther"
-        Me.BtnLogToOther.Size = New System.Drawing.Size(117, 40)
+        Me.BtnLogToOther.Size = New System.Drawing.Size(61, 40)
         Me.BtnLogToOther.TabIndex = 10
         Me.BtnLogToOther.UseVisualStyleBackColor = true
         '
         'BtnLogtoOwn
         '
         Me.BtnLogtoOwn.Image = Global.EventLogX.My.Resources.Resources.arrow_full_down_128
-        Me.BtnLogtoOwn.Location = New System.Drawing.Point(184, 264)
+        Me.BtnLogtoOwn.Location = New System.Drawing.Point(296, 264)
         Me.BtnLogtoOwn.Margin = New System.Windows.Forms.Padding(4)
         Me.BtnLogtoOwn.Name = "BtnLogtoOwn"
-        Me.BtnLogtoOwn.Size = New System.Drawing.Size(117, 40)
+        Me.BtnLogtoOwn.Size = New System.Drawing.Size(61, 40)
         Me.BtnLogtoOwn.TabIndex = 9
         Me.BtnLogtoOwn.UseVisualStyleBackColor = true
         '
@@ -264,12 +266,22 @@ Partial Class FrmThinClient
         Me.BtnSourceToOther.TabIndex = 22
         Me.BtnSourceToOther.UseVisualStyleBackColor = true
         '
+        'BtnRefresh
+        '
+        Me.BtnRefresh.Image = Global.EventLogX.My.Resources.Resources.Button_Refresh_icon
+        Me.BtnRefresh.Location = New System.Drawing.Point(120, 264)
+        Me.BtnRefresh.Name = "BtnRefresh"
+        Me.BtnRefresh.Size = New System.Drawing.Size(61, 40)
+        Me.BtnRefresh.TabIndex = 24
+        Me.BtnRefresh.UseVisualStyleBackColor = true
+        '
         'FrmThinClient
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8!, 16!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.AutoScroll = true
         Me.ClientSize = New System.Drawing.Size(1467, 617)
+        Me.Controls.Add(Me.BtnRefresh)
         Me.Controls.Add(Me.BtnSourceToOwn)
         Me.Controls.Add(Me.BtnSourceToOther)
         Me.Controls.Add(Me.Label8)
@@ -292,6 +304,7 @@ Partial Class FrmThinClient
         Me.Controls.Add(Me.TxtLogName)
         Me.Controls.Add(Me.LstLogsOther)
         Me.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.Icon = CType(resources.GetObject("$this.Icon"),System.Drawing.Icon)
         Me.Margin = New System.Windows.Forms.Padding(4)
         Me.Name = "FrmThinClient"
         Me.Text = "EventLog Wizard"
@@ -324,4 +337,5 @@ End Sub
     Friend WithEvents Label8 As Label
     Friend WithEvents BtnSourceToOwn As Button
     Friend WithEvents BtnSourceToOther As Button
+    Friend WithEvents BtnRefresh As Button
 End Class

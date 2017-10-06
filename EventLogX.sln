@@ -5,16 +5,30 @@ VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "EventLogX", "EventLogX\EventLogX.vbproj", "{F8E5415F-B8DC-45F0-968C-3A668BE1E3C0}"
 EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "EventLogXSetup", "EventLogXSetup\EventLogXSetup.wixproj", "{CE22302B-26B7-47FD-98C4-4200F8E1F14C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{F8E5415F-B8DC-45F0-968C-3A668BE1E3C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F8E5415F-B8DC-45F0-968C-3A668BE1E3C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8E5415F-B8DC-45F0-968C-3A668BE1E3C0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F8E5415F-B8DC-45F0-968C-3A668BE1E3C0}.Debug|x86.Build.0 = Debug|Any CPU
 		{F8E5415F-B8DC-45F0-968C-3A668BE1E3C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8E5415F-B8DC-45F0-968C-3A668BE1E3C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8E5415F-B8DC-45F0-968C-3A668BE1E3C0}.Release|x86.ActiveCfg = Release|Any CPU
+		{F8E5415F-B8DC-45F0-968C-3A668BE1E3C0}.Release|x86.Build.0 = Release|Any CPU
+		{CE22302B-26B7-47FD-98C4-4200F8E1F14C}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{CE22302B-26B7-47FD-98C4-4200F8E1F14C}.Debug|x86.ActiveCfg = Debug|x86
+		{CE22302B-26B7-47FD-98C4-4200F8E1F14C}.Debug|x86.Build.0 = Debug|x86
+		{CE22302B-26B7-47FD-98C4-4200F8E1F14C}.Release|Any CPU.ActiveCfg = Release|x86
+		{CE22302B-26B7-47FD-98C4-4200F8E1F14C}.Release|x86.ActiveCfg = Release|x86
+		{CE22302B-26B7-47FD-98C4-4200F8E1F14C}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -19,61 +19,14 @@ Module ModStart
 
     Public Sub Main()
 
-        ' Ensure running as admin. If determinated in Settings/Windows-Settings, you cant deploy with ClickOnce. 
-    '#If Not Debug Then
-
-        'Try
-        '    If Not New WindowsPrincipal(WindowsIdentity.GetCurrent).IsInRole(WindowsBuiltInRole.Administrator) Then
-
-        '        Process.Start(New ProcessStartInfo With { _
-        '                                                 .UseShellExecute = True, _
-        '                                                 .WorkingDirectory = Environment.CurrentDirectory, _
-        '                                                 .FileName = Assembly.GetEntryAssembly.CodeBase, _
-        '                                                 .Verb = "runas"} _
-        '                      )
-        '        End
-
-        '    Else
-
-
-        '        ThisEventLogs = New EventLogsX
-        '        Call ShowRoot
-
-        '    End If
-
-        'Catch ex As Exception
-
-        '    Console.BackgroundColor = ConsoleColor.DarkRed
-        '    Console.WriteLine("{0,-80}","This programm should run in admin context.")
-        '    Console.WriteLine("{0,-80}","Hit ""ENTER"" to close programm.")
-        '    Console.ReadLine
-        '    End
-
-        'End Try
-
-        ''#Else 
-
-        If Not New WindowsPrincipal(WindowsIdentity.GetCurrent).IsInRole(WindowsBuiltInRole.Administrator) Then
-
-            Console.BackgroundColor = ConsoleColor.DarkRed
-            Console.WriteLine("{0,-80}", "This programm should run in admin context.")
-            Console.WriteLine("{0,-80}", "Hit ""ENTER"" to close programm.")
-            Console.ReadLine
-            End
-
-        End If
-
         ThisEventLogs = New EventLogsX
         Call ShowRoot
 
-'#End If
-
     End Sub
-
-
 
     Private Sub ShowRoot()
 
+        ThisEventLogs.Refresh
 
            ThisSelectedLog = Nothing
         ThisSelectedSource = Nothing

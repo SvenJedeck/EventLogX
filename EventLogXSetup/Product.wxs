@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"><?define EventLogX_TargetDir=$(var.EventLogX.TargetDir)?>
+  <Product Id="*" Name="EventLogX" Language="1033" Version="1.4.2" Manufacturer="Sven Jedeck" UpgradeCode="85e68c7e-833a-46e6-894b-b3ab435e7492">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes"/>
+
+    <Icon Id="EventLog.ico" SourceFile="..\EventLog.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="EventLog.ico" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="APPLICATIONROOTDIRECTORY" Name="EventLogX" />
+      </Directory>
+
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="EventLogX"/>
+      </Directory>
+
+    </Directory>
+
+    <DirectoryRef Id="APPLICATIONROOTDIRECTORY">
+
+      <Component Id="EventLogX.exe" Guid="ae2aab2d-c91c-47f6-a2c5-bff27b797f90">
+        <File Id="EventLogX.exe" Name="EventLogX.exe" Source="$(var.EventLogX_TargetDir)EventLogX.exe" />
+      </Component>
+
+      <Component Id="EventLogX.exe.config" Guid="33e82b72-b246-4327-81aa-3f6d8f570340">
+        <File Id="EventLogX.exe.config" Name="EventLogX.exe.config" Source="$(var.EventLogX_TargetDir)EventLogX.exe.config" />
+      </Component>
+
+    </DirectoryRef>
+
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="ApplicationShortcut" Guid="da22a7bc-782f-4b74-a49f-18a88a0e5b5b">
+
+        <Shortcut Id="ApplicationStartMenuShortcut"
+                  Name="EventLogX"
+                  Description="Tool to create/delete EventLogs/Sources"
+                  Target="[#EventLogX.exe]"
+                  WorkingDirectory="APPLICATIONROOTDIRECTORY"/>
+
+        <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+        <RegistryValue Root="HKCU" Key="Software\Microsoft\EventLogX" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+
+      </Component>
+    </DirectoryRef>
+
+    <Feature Id="MainApplication" Title="EventLogX" Level="1">
+      <ComponentRef Id="EventLogX.exe" />
+      <ComponentRef Id="EventLogX.exe.config" />
+      <ComponentRef Id="ApplicationShortcut" />
+    </Feature>
+
+  </Product>
+</Wix>
