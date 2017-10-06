@@ -185,7 +185,7 @@ Public Class EventLogsX
 
             EventLog.CreateEventSource(sourceName, logName)
 
-        TryWriteEntry: 
+        ReTryWriteEntry: 
 
             MyErrorCount =+ 1
 
@@ -204,7 +204,7 @@ Public Class EventLogsX
             If MyErrorCount = -1 Then Return Nothing 
 
             ' EventLog.CreateEventSource(logName, standardSource) was OK, but couldn't access at the moment. Try at least 30 sec.
-            If MyErrorCount >= 30 Then Return Nothing Else GoTo TryWriteEntry 
+            If MyErrorCount >= 30 Then Return Nothing Else GoTo ReTryWriteEntry 
 
         End Try
 
@@ -274,12 +274,12 @@ Public Class EventLogsX
             RegRootKey.SetValue("OwnSources", MyRegListOfOwnSources.ToArray)
 
             ' Re-Read Logs and Sources
-            SourceList.Clear : LogList = EventLogX.GetEventLogs(Me)
+            Call Refresh
 
         Catch ex As Exception
 
             ' Re-Read Logs and Sources
-            SourceList.Clear : LogList = EventLogX.GetEventLogs(Me)
+            Call Refresh
             Return False
 
         End Try
@@ -307,7 +307,7 @@ Public Class EventLogsX
             RegRootKey.SetValue("OwnSources", MyRegListOfOwnSources.ToArray)
         
             ' Re-Read Logs and Sources
-            SourceList.Clear : LogList = EventLogX.GetEventLogs(Me)
+            Call Refresh
 
         Catch ex As Exception
             Return False
@@ -568,6 +568,11 @@ Public Class EventLogsX
 
         Public ReadOnly Property ChildSources As List(Of LogSource)
 
+        ''' <summary>
+        ''' Sets owner state. If <paramref name="withChilds"/> = True, then ownership of refered sources will be changed as well.
+        ''' </summary>
+        ''' <param name="newOwner"></param>
+        ''' <param name="withChilds"></param>
         Public Sub SetOwner(newOwner As OwnerEnum, withChilds As Boolean)
 
             If newOwner = _Owner Then Exit Sub
@@ -598,7 +603,7 @@ Public Class EventLogsX
                 Next
             End If
 
-        Parent.SourceList.Clear: Parent.LogList = EventLogX.GetEventLogs(Parent)
+        Parent.Refresh
 
         End Sub
 
@@ -616,25 +621,28 @@ Public Class EventLogsX
             _Name = Log
             _ShortName = Left(Name, 8)
             _Parent = parent
-            _Owner = GetLogOwner()
+            _Owner = GetOwnerState()
 
             ChildSources = GetSourcesFromReg()
 
         End Sub
 
-        Public Overloads Shared Function GetEventLogs(parent As EventLogsX) As List(Of EventLogX)
+        ''' <summary>
+        ''' Searches all EventLogs and returns List (Of EventLogX)
+        ''' </summary>
+        ''' <param name="parent"></param>
+        ''' <returns></returns>
+        Protected Friend Overloads Shared Function GetEventLogs(parent As EventLogsX) As List(Of EventLogX)
 
-            Dim MyReturn As New List(Of EventLogX)
+            GetEventLogs = New List(Of EventLogX)
 
             For Each Ev In EventLog.GetEventLogs
-                MyReturn.Add(New EventLogX(Ev.Log, parent))
+                GetEventLogs.Add(New EventLogX(Ev.Log, parent))
             Next
-
-            Return MyReturn
 
         End Function
 
-        Private Function GetLogOwner() As OwnerEnum
+        Private Function GetOwnerState() As OwnerEnum
 
             If CType(Parent.RegRootKey.GetValue("OwnLogs"), Array).Cast(Of String)().ToList().Find(Function(L) L.ToLower = Me.Name.ToLower) Is Nothing Then Return OwnerEnum.OTHER
 
@@ -685,7 +693,7 @@ Public Class EventLogsX
                 Root.RegRootKey.SetValue("OwnSources", MyOwnList.ToArray)
                 _Owner = newOwner
 
-                If Not IsChildMove Then Root.SourceList.Clear: Root.LogList = EventLogX.GetEventLogs(Root)
+                If Not IsChildMove Then Root.Refresh
 
             End Sub
 
@@ -694,11 +702,10 @@ Public Class EventLogsX
                 _Parent = parent
                 _root = parent.Parent
                 _Name = name
-                _Owner = GetSourceOwnerFromReg()
+                _Owner = GetOwnerState()
 
             End Sub
-
-            Private Function GetSourceOwnerFromReg() As OwnerEnum
+            Private Function GetOwnerState() As OwnerEnum
 
                 ' Lookup own soures RegValue. if not inside then owner is NOT "OWN" >> OTHER
                 If CType(Root.RegRootKey.GetValue("OwnSources"), Array).Cast(Of String)().ToList().Find(Function(L) L.ToLower = Me.Name.ToLower) Is Nothing Then Return OwnerEnum.OTHER
