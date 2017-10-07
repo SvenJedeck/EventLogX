@@ -1,14 +1,14 @@
-# Introduction
+# Download Bins
 Download MSI: http://repository.thats.im/projects/EventLogWizard/EventLogXSetup.msi
 Download MSI as RAR: http://repository.thats.im/projects/EventLogWizard/EventLogXSetup.rar
 
-# Introduction
+# If you use this sourcecode, you should change 1 option in VS
+GoTo ;) Text-Editor/Basic/Tabstopps and select NO.
+Else this code will lose some structure.
 
-<< EventLogSourceWizard >>
+# Introduction EventLogX 
 
-'------
--||- A small tool to create and delete/delete EventLogs and Sources in a safe way. -||-
-'------
+A small tool to create and delete/delete EventLogs and Sources in a safe way
 
 1) Project target
 
@@ -30,15 +30,19 @@ For this reason this is a combined Console/WinForm project, in which you can sta
 3) Good to know
 
 There are some rules for creating rules in MSDN. E.g. 
-- Unique shortnames (8 digits) for eventlogs. This doesn't fit any more with W10. You can use MyEventLog01 and MyEventLog02. 
-- With W10 you do not need to restart machine after deleting log/source.
-and so on.. ;)
+- Unique shortnames (8 digits) for eventlogs.
+- Charsets, etc.
+
+With W10 you do not need to restart machine after deleting log/source.
 
 ! This tool is only tested on W10 !
+
 
 '#################################################'
 '### !! Tool must run with admin privilegs. !! ###
 '#################################################'
+
+
 That results in starting VS with privilegs. 
 This is due to the fact, that Windows needs admin rights to loop sources (cus you need them to look into security log)
 
@@ -73,7 +77,7 @@ Using as programmer:
 	>> Private ThisProtectedLogsFull As New List(Of String)({"Security", "System"}) <<
 	As name said. They are fully protected.
 
-If you want to use the pseudo API for a WinForm, you must refer/link some controls:
+If you want to use the pseudo API for a WinForm, you must refer/link some controls and you must choose confimation level:
 
 	- List/Combo for OTHER logs
 	- List/Combo for OWN logs
@@ -91,10 +95,10 @@ You can refer/link all action buttons. (See example WinForm: "FrmThinCLient"). A
 
 
 3.	Software dependencies
-None
+FW 4.6.1
 
 4.	Latest releases
-V1.4.2
+V1.4.3
 
 # Build and Test
 As descriped below, it was not my intention to have a class which appears in top proper and common way. Events and some clean structure are missing to reach that target. 
