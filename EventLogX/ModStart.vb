@@ -76,7 +76,7 @@ Module ModStart
         Console.WriteLine("{0,-80}", " Enter Number ")
         Console.WriteLine("{0,-80}", " 1 = Start Thin Client")
         Console.WriteLine("{0,-80}", " 2 = Show Logs")
-        Console.WriteLine("{0,-80}", " 3 = Create Log")
+        Console.WriteLine("{0,-80}", " 3 = Create Log/Source")
         Console.WriteLine("{0,-80}", " 4 = Exit Programm")
 
         Console.BackgroundColor = ConsoleColor.Black
@@ -261,19 +261,39 @@ Module ModStart
 
                             Dim MyLogName = ThisSelectedLog.Name
 
-                            If ThisEventLogs.DeleteLog(ThisSelectedLog.Name) Then
-                                Console.BackgroundColor = ConsoleColor.DarkGreen
-                                Console.WriteLine("{0,-80}", "Log " & MyLogName & " deleted. Press Enter to continue")
-                                Console.ReadLine
-                                Console.WriteLine("")
-                                Call ShowRoot : Exit Sub                                
-                            Else
+                            ' Confirm deleting log.
+                            Console.BackgroundColor = ConsoleColor.DarkGreen
+                            Console.WriteLine("{0,-80}", "Please confirm log ""DELETE"" with ""Y"", else just ""ENTER"" ")
+                            Console.BackgroundColor = ConsoleColor.DarkBlue
+                            Console.WriteLine("{0,-80}", MyLogName)
+
+                               Console.BackgroundColor = ConsoleColor.Black
+                            If Console.ReadLine = "Y".ToLower Then ' confirm creating
+                               Console.WriteLine("")
+
+                                If ThisEventLogs.DeleteLog(ThisSelectedLog.Name) Then
+                                    Console.BackgroundColor = ConsoleColor.DarkGreen
+                                    Console.WriteLine("{0,-80}", "Log " & MyLogName & " deleted. Press Enter to continue")
+                                    Console.ReadLine
+                                    Console.WriteLine("")
+                                    Call ShowRoot : Exit Sub                                
+                                Else ' Some unknown error occured at deleting.
+                                    Console.BackgroundColor = ConsoleColor.DarkRed
+                                    Console.WriteLine("{0,-80}", "Error deleting " & MyLogName & ". Press Enter to continue")
+                                    Console.ReadLine
+                                    Console.WriteLine("")
+                                    Call ShowRoot : Exit Sub                                
+                                End If
+
+                            Else ' Deleting was caneld by user
+
                                 Console.BackgroundColor = ConsoleColor.DarkRed
-                                Console.WriteLine("{0,-80}", "Error deleting " & MyLogName & ". Press Enter to continue")
+                                Console.WriteLine("{0,-80}", """DELETE"" action was canceled. Press Enter to go on.")
                                 Console.ReadLine
                                 Console.WriteLine("")
-                                Call ShowRoot : Exit Sub                                
-                            End If
+                                Call ShowActions : Exit Sub
+
+                            End If ' End confirmation
                             
                         Else ' Assumptions missing to delete log.
                             Console.BackgroundColor = ConsoleColor.DarkRed
@@ -288,24 +308,42 @@ Module ModStart
                         If MyActionState.SOURCE_DELETE Then
 
                             Dim MySourceName = ThisSelectedSource.Name
-                            ThisEventLogs.DeleteSource(ThisSelectedSource.Name)
 
-                            ' Check if log is deleted.
-                            If ThisEventLogs.GetSources.Find(Function (S) S.Name = MySourceName) Is Nothing Then
-                                Console.BackgroundColor = ConsoleColor.DarkGreen
-                                Console.WriteLine("{0,-80}", "Source """ & MySourceName & """ deleted. Press Enter to continue")
-                                Console.ReadLine
-                                Console.WriteLine("")
-                                Call ShowRoot : Exit Sub                                
-                            Else
+                            ' Confirm deleting log.
+                            Console.BackgroundColor = ConsoleColor.DarkGreen
+                            Console.WriteLine("{0,-80}", "Please confirm source ""DELETE"" with ""Y"", else just ""ENTER"" ")
+                            Console.BackgroundColor = ConsoleColor.DarkBlue
+                            Console.WriteLine("{0,-80}", MySourceName)
+
+                               Console.BackgroundColor = ConsoleColor.Black
+                            If Console.ReadLine = "Y".ToLower Then ' confirm creating
+                               Console.WriteLine("")
+
+                                If ThisEventLogs.DeleteSource(ThisSelectedSource.Name) Then ' delete success
+                                    Console.BackgroundColor = ConsoleColor.DarkGreen
+                                    Console.WriteLine("{0,-80}", "Source """ & MySourceName & """ deleted. Press Enter to continue")
+                                    Console.ReadLine
+                                    Console.WriteLine("")
+                                    Call ShowRoot : Exit Sub                                
+                                Else ' delete unknown error
+                                    Console.BackgroundColor = ConsoleColor.DarkRed
+                                    Console.WriteLine("{0,-80}", "Error deleting """ & MySourceName & """. Press Enter to continue")
+                                    Console.ReadLine
+                                    Console.WriteLine("")
+                                    Call ShowRoot : Exit Sub                                
+                                End If
+
+                            Else ' Source deleting was canceled by user
+
                                 Console.BackgroundColor = ConsoleColor.DarkRed
-                                Console.WriteLine("{0,-80}", "Error deleting """ & MySourceName & """. Press Enter to continue")
+                                Console.WriteLine("{0,-80}", """DELETE"" action was canceled. Press Enter to go on.")
                                 Console.ReadLine
                                 Console.WriteLine("")
-                                Call ShowRoot : Exit Sub                                
+                                Call ShowActions : Exit Sub
+
                             End If
 
-                        Else
+                        Else ' Assumptions missing to delete log.
 
                             Console.BackgroundColor = ConsoleColor.DarkRed
                             Console.WriteLine("{0,-80}", "No valid action was choosen. Press Enter to go on.")

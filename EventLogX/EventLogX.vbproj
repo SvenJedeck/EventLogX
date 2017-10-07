@@ -65,8 +65,7 @@
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>EventLog.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -167,6 +166,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Button-Refresh-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="EventLog.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

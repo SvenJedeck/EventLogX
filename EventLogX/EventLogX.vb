@@ -127,16 +127,25 @@ Public Class EventLogsX
         Return LogList.FindAll(Function(L) L.Owner = owner)
     End Function ' GetLogs
 
+    ''' <summary>
+    ''' Get single EventLog filtered by name. 
+    ''' </summary>
+    ''' <param name="logName"></param>
+    ''' <returns></returns>
+    Public Function GetLogs(logName As String) As EventLogX
+        Return LogList.Find(Function(L) L.Name.ToLower = logName.ToLower)
+    End Function ' GetLogs
+
     Public Function LogExists(logName As String) As Boolean
         Return LogList.Exists(Function (L) L.Name.ToLower = logName.ToLower)
     End Function ' GetLogs
 
-    Public Function LogExists(log As EventLog) As Boolean
-        Return LogList.Exists(Function (L) L.Name.ToLower = log.Log.ToLower)
+    Public Function LogExists(evtLog As EventLog) As Boolean
+        Return LogList.Exists(Function (L) L.Log = evtLog.Log)
     End Function ' GetLogs
 
-    Public Function LogExists(log As EventLogX) As Boolean
-        Return LogList.Exists(Function (L) L.Name.ToLower = log.Name.ToLower)
+    Public Function LogExists(evtLogX As EventLogX) As Boolean
+        Return LogList.Exists(Function (L) L Is evtLogX)
     End Function ' GetLogs
 
 
