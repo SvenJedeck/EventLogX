@@ -1,5 +1,6 @@
 # Download Bins
 Download MSI: http://repository.thats.im/projects/EventLogWizard/EventLogXSetup.msi
+
 Download MSI as RAR: http://repository.thats.im/projects/EventLogWizard/EventLogXSetup.rar
 
 # If you use this sourcecode, you should change 1 option in VS
@@ -38,9 +39,11 @@ With W10 you do not need to restart machine after deleting log/source.
 ! This tool is only tested on W10 !
 
 
-'#################################################'
+'#######'
+
 '### !! Tool must run with admin privilegs. !! ###
-'#################################################'
+
+'#######'
 
 
 That results in starting VS with privilegs. 
