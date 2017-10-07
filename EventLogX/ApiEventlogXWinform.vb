@@ -2,6 +2,19 @@
 
 Public Class ApiEventlogXWinform
 
+    ''' <summary>
+    ''' Adjust the confirmation level.
+    ''' </summary>
+    Public Enum ConfirmLevelList
+        NON
+        DELTE_LOG
+        DELTE_LOG_AND_SOURCE
+        DELTE_ALL_SWITCH_LOG_OWNER
+        DELTE_ALL_SWITCH_ALL
+        DEL_ALL_SWITCH_ALL_CREATE_ALL
+    End Enum
+        Public ConfirmLevel As ConfirmLevelList
+ 
     Public Enum ControlType
         LISTBOX
         COMBOBOX
@@ -28,7 +41,8 @@ Public Class ApiEventlogXWinform
 
     Public Sub New( parentForm As Form, _
                     logsOwn As Object, logsOther As Object, sourcesOwn As Object, sourcesOther As Object, _
-                    selectedLog As TextBox, selectedSource As TextBox, ownLogName As TextBox, ownSourceName As TextBox)
+                    selectedLog As TextBox, selectedSource As TextBox, ownLogName As TextBox, ownSourceName As TextBox, _
+                    confirmingLevel As ConfirmLevelList)
 
         Call InstanceLogsAndSources(logsOwn, logsOther, sourcesOwn, sourcesOther)
 
@@ -41,11 +55,14 @@ Public Class ApiEventlogXWinform
         MyEventLogs.Refresh
         Logs.SetDataSources
 
+        ConfirmLevel = confirmingLevel
+
     End Sub
 
     Public Sub New( parentForm As Form, _
                     logsOwn As Object, logsOther As Object, sourcesOwn As Object, sourcesOther As Object, _
-                    selectedLog As TextBox, selectedSource As TextBox)
+                    selectedLog As TextBox, selectedSource As TextBox, _
+                    confirmingLevel As ConfirmLevelList)
 
         Call InstanceLogsAndSources(logsOwn, logsOther, sourcesOwn, sourcesOther)
 
@@ -57,6 +74,8 @@ Public Class ApiEventlogXWinform
 
         MyEventLogs.Refresh
         Logs.SetDataSources
+
+        ConfirmLevel = confirmingLevel
 
     End Sub
             Private Sub InstanceLogsAndSources(logsOwn As Object, logsOther As Object, sourcesOwn As Object, sourcesOther As Object)
@@ -94,39 +113,142 @@ Public Class ApiEventlogXWinform
 
     End Sub
 
+
+
     Private Sub BtnNewSource_Click(sender As Object, e As EventArgs) Handles BtnNewSource.Click
-        MyEventLogs.CreateSource(Logs.CurrentLogName, Sources.CurrentSourceName)
-        Logs.SetDataSources
+
+        Dim RunAction As Boolean = False
+
+        ' Just ignore long row. It is only a simple string in a long text line. 
+        If ConfirmLevel = ConfirmLevelList.DEL_ALL_SWITCH_ALL_CREATE_ALL Then _
+                    If MessageBox.Show("Add new Source """ & Sources.CurrentSourceName & """ to " & IIf(MyEventLogs.LogExists(Logs.CurrentLogName), CType("existing", String), CType("new", String)).ToString & " EventLog """ & Logs.CurrentLogName & """ ?", _
+                                       "Please Confirm", _
+                                        MessageBoxButtons.YesNo, _ 
+                                        MessageBoxIcon.Question, _
+                                        MessageBoxDefaultButton.Button2) _
+                        = DialogResult.Yes  Then _
+                            RunAction = True
+
+        If RunAction Then 
+            MyEventLogs.CreateSource(Logs.CurrentLogName, Sources.CurrentSourceName) 
+            Logs.SetDataSources
+        End If
+
     End Sub
 
     Private Sub BtnDelLog_Click(sender As Object, e As EventArgs) Handles BtnDelLog.Click
-        MyEventLogs.DeleteLog(Logs.SelectedLog.Name)
-        Logs.SetDataSources
+
+        Dim RunAction As Boolean = False
+
+        Select Case ConfirmLevel
+
+            Case ConfirmLevelList.NON
+
+                            RunAction = True
+            Case Else
+
+                    If MessageBox.Show("Delete the Log """ & Logs.CurrentLogName & """ and all refered child Sources ? ", _
+                                       "Please Confirm", _
+                                        MessageBoxButtons.YesNo, _ 
+                                        MessageBoxIcon.Question, _
+                                        MessageBoxDefaultButton.Button2) _
+                        = DialogResult.Yes  Then _
+                            RunAction = True
+        End Select
+
+        If RunAction Then 
+            MyEventLogs.DeleteLog(Logs.SelectedLog.Name)
+            Logs.SetDataSources
+        End If
+
     End Sub
 
-    Private Sub BtnLogToOther_Click(sender As Object, e As EventArgs) Handles BtnLogToOther.Click
-        Logs.SelectedLog.SetOwner(EventLogsX.OwnerEnum.OTHER, True)
-        Logs.SetDataSources
+    Private Sub BtnLogSwitch(sender As Object, e As EventArgs) Handles BtnLogToOther.Click, BtnLogtoOwn.Click
+
+        Dim RunAction As Boolean = False
+
+        ' Get new owner by sender button
+        Dim MyOwner As EventLogsX.OwnerEnum = CType(IIf(CType(sender, Button).Name = "BtnLogToOther", EventLogsX.OwnerEnum.OTHER , EventLogsX.OwnerEnum.OWN), EventLogsX.OwnerEnum)
+
+        Select Case ConfirmLevel
+
+            Case ConfirmLevelList.NON, ConfirmLevelList.DELTE_LOG, ConfirmLevelList.DELTE_LOG_AND_SOURCE
+
+                            RunAction = True
+            Case Else
+
+                    If MessageBox.Show("Switch the Log """ & Logs.CurrentLogName & """ and all refered child Sources to """ & MyOwner.ToString & """ ? ", _
+                                       "Please Confirm", _
+                                        MessageBoxButtons.YesNo, _ 
+                                        MessageBoxIcon.Question, _
+                                        MessageBoxDefaultButton.Button2) _
+                        = DialogResult.Yes  Then _
+                            RunAction = True
+        End Select
+
+        If RunAction Then 
+            Logs.SelectedLog.SetOwner(MyOwner, True)
+            Logs.SetDataSources
+        End If
+
     End Sub
 
-    Private Sub BtnLogtoOwn_Click(sender As Object, e As EventArgs) Handles BtnLogtoOwn.Click
-        Logs.SelectedLog.SetOwner(EventLogsX.OwnerEnum.OWN, True)
-        Logs.SetDataSources
-    End Sub
+    Private Sub BtnSourceSwitch(sender As Object, e As EventArgs) Handles BtnSourceToOther.Click, BtnSourceToOwn.Click
 
-    Private Sub BtnSourceToOther_Click(sender As Object, e As EventArgs) Handles BtnSourceToOther.Click
-        Sources.SelectedSource.SetOwner(EventLogsX.OwnerEnum.OTHER)
-        Sources.SetDataSources(Logs.SelectedLog.Name)
-    End Sub
+        Dim RunAction As Boolean = False
 
-    Private Sub BtnSourceToOwn_Click(sender As Object, e As EventArgs) Handles BtnSourceToOwn.Click
-        Sources.SelectedSource.SetOwner(EventLogsX.OwnerEnum.OWN)
-        Sources.SetDataSources(Logs.SelectedLog.Name)
+        ' Get new owner by sender button
+        Dim MyOwner As EventLogsX.OwnerEnum = CType(IIf(CType(sender, Button).Name = "BtnSourceToOther", EventLogsX.OwnerEnum.OTHER , EventLogsX.OwnerEnum.OWN), EventLogsX.OwnerEnum)
+
+        Select Case ConfirmLevel
+
+            Case ConfirmLevelList.NON, ConfirmLevelList.DELTE_LOG, ConfirmLevelList.DELTE_LOG_AND_SOURCE, ConfirmLevelList.DELTE_ALL_SWITCH_LOG_OWNER
+
+                            RunAction = True
+            Case Else
+
+                    If MessageBox.Show("Switch the Source """ & Logs.CurrentLogName & """ to """ & MyOwner.ToString & """ ? ", _
+                                       "Please Confirm", _
+                                        MessageBoxButtons.YesNo, _ 
+                                        MessageBoxIcon.Question, _
+                                        MessageBoxDefaultButton.Button2) _
+                        = DialogResult.Yes  Then _
+                            RunAction = True
+        End Select
+
+        If RunAction Then 
+            Sources.SelectedSource.SetOwner(MyOwner)
+            Sources.SetDataSources(Logs.SelectedLog.Name)
+        End If
+
     End Sub
 
     Private Sub BtnDelSource_Click(sender As Object, e As EventArgs) Handles BtnDelSource.Click
-        MyEventLogs.DeleteSource(Sources.SelectedSource.Name)
-        Sources.SetDataSources(Logs.SelectedLog.Name)
+
+        Dim RunAction As Boolean = False
+
+        Select Case ConfirmLevel
+
+            Case ConfirmLevelList.NON, ConfirmLevelList.DELTE_LOG
+
+                            RunAction = True
+            Case Else
+
+                    If MessageBox.Show("Delete the Source """ & Sources.CurrentSourceName & """ ? ", _
+                                       "Please Confirm", _
+                                        MessageBoxButtons.YesNo, _ 
+                                        MessageBoxIcon.Question, _
+                                        MessageBoxDefaultButton.Button2) _
+                        = DialogResult.Yes  Then _
+                            RunAction = True
+        End Select
+
+        If RunAction Then 
+            MyEventLogs.DeleteSource(Sources.SelectedSource.Name)
+            Sources.SetDataSources(Logs.SelectedLog.Name)
+        End If
+
+
     End Sub
 
     Private Sub BtnRefresh_Click(sender As Object, e As EventArgs) Handles BtnRefresh.Click

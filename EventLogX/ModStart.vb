@@ -8,8 +8,8 @@ Module ModStart
     Private ThisBackColorOrg As ConsoleColor = Console.BackgroundColor
     Private    ThisForeColorOrg As ConsoleColor = Console.ForegroundColor
 
-    Private ThisFrmThinClient As FrmThinClient
-    Private ThisFormThread As New Threading.Thread(AddressOf ShowFrmThinClient)
+    Private ThisFrmThinClient As FrmThinClient = Nothing
+    Private ThisFormThread As Threading.Thread = Nothing'(AddressOf ShowFrmThinClient) = 
 
     Private     ThisSelectedLog As EventLogsX.EventLogX
     Private  ThisSelectedSource As EventLogsX.EventLogX.LogSource
@@ -24,6 +24,46 @@ Module ModStart
 
     End Sub
 
+    Private Sub CloseForm()
+
+        If Not ThisFrmThinClient Is Nothing Then
+
+            Try
+                ThisFrmThinClient.BeginInvoke(New Action(Sub() ThisFrmThinClient.Close()))
+            Catch ex As Exception
+            End Try
+
+            ThisFrmThinClient = Nothing
+
+        End If
+        
+    End Sub
+
+    Private Sub CloseThread()
+
+        If Not ThisFrmThinClient Is Nothing Then CloseForm
+    
+        If Not ThisFormThread Is Nothing Then 
+            On Error Resume Next    
+                ThisFormThread.Abort 
+                ThisFormThread = Nothing
+            On Error GoTo 0
+        End If
+
+    End Sub
+
+    Private Sub InitForm()
+
+        If Not ThisFrmThinClient Is Nothing Then CloseForm
+        If Not ThisFormThread Is Nothing Then CloseThread
+
+        ThisFormThread = New Threading.Thread(AddressOf ShowFrmThinClient) 
+
+        ThisFormThread.SetApartmentState(Threading.ApartmentState.STA)
+        ThisFormThread.Start()
+
+    End Sub
+
     Private Sub ShowRoot()
 
         ThisEventLogs.Refresh
@@ -35,9 +75,9 @@ Module ModStart
 
         Console.WriteLine("{0,-80}", " Enter Number ")
         Console.WriteLine("{0,-80}", " 1 = Start Thin Client")
-        Console.WriteLine("{0,-80}", " 2 = Exit Programm")
-        Console.WriteLine("{0,-80}", " 3 = Show Logs")
-        Console.WriteLine("{0,-80}", " 4 = Create Log")
+        Console.WriteLine("{0,-80}", " 2 = Show Logs")
+        Console.WriteLine("{0,-80}", " 3 = Create Log")
+        Console.WriteLine("{0,-80}", " 4 = Exit Programm")
 
         Console.BackgroundColor = ConsoleColor.Black
 
@@ -50,29 +90,21 @@ Module ModStart
 
                 Case 1 ' Start WinForm
 
-                    ThisFormThread.SetApartmentState(Threading.ApartmentState.STA)
-                    ThisFormThread.Start()
+                    Call InitForm
                     Call ShowRoot : Exit Sub
 
-                Case 2 ' End
-
-                        If Not ThisFrmThinClient Is Nothing Then
-                            Try
-                                ThisFrmThinClient.BeginInvoke(New Action(Sub() ThisFrmThinClient.Close()))
-                            Catch ex As Exception : End Try
-                                                            ThisFrmThinClient = Nothing
-                            ThisFormThread.Abort : ThisFormThread = Nothing
-                        End If
-
-                    End
-
-                Case 3 ' Show Dialog
+                Case 2 ' Show Dialog
 
                     Call ShowLogs : Exit Sub
 
-                Case 4
+                Case 3
 
                     Call ShowCreate : Exit Sub
+
+                Case 4 ' End
+
+                    CloseThread()
+                    End
 
                 Case Else
                     Console.BackgroundColor = ConsoleColor.DarkRed
@@ -103,6 +135,8 @@ Module ModStart
 
            ThisSelectedLog = Nothing
         ThisSelectedSource = Nothing
+
+        ThisEventLogs.Refresh
 
         Console.BackgroundColor = ConsoleColor.DarkGreen
         Console.WriteLine("{0,-80}", "Select Log")

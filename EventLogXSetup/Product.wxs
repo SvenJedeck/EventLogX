@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"><?define EventLogX_TargetDir=$(var.EventLogX.TargetDir)?>
-  <Product Id="*" Name="EventLogX" Language="1033" Version="1.4.2" Manufacturer="Sven Jedeck" UpgradeCode="85e68c7e-833a-46e6-894b-b3ab435e7492">
+  <Product Id="*" Name="EventLogX" Language="1033" Version="1.4.3" Manufacturer="Sven Jedeck" UpgradeCode="85e68c7e-833a-46e6-894b-b3ab435e7492">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />

@@ -34,6 +34,7 @@ Public Class EventLogsX
         Public       CHARSET_FITS As Boolean
         Public     CHILDS_ARE_OWN As Boolean
         Public             EXISTS As Boolean
+        Public  SHORT_NAME_EXISTS As Boolean
         Public             IS_OWN As Boolean
         Public       IS_PROTECTED As Boolean
         Public IS_PROTECTED_FULLY As Boolean
@@ -126,6 +127,19 @@ Public Class EventLogsX
         Return LogList.FindAll(Function(L) L.Owner = owner)
     End Function ' GetLogs
 
+    Public Function LogExists(logName As String) As Boolean
+        Return LogList.Exists(Function (L) L.Name.ToLower = logName.ToLower)
+    End Function ' GetLogs
+
+    Public Function LogExists(log As EventLog) As Boolean
+        Return LogList.Exists(Function (L) L.Name.ToLower = log.Log.ToLower)
+    End Function ' GetLogs
+
+    Public Function LogExists(log As EventLogX) As Boolean
+        Return LogList.Exists(Function (L) L.Name.ToLower = log.Name.ToLower)
+    End Function ' GetLogs
+
+
     ''' <summary>
     '''  Get all EventLog Sources of local machine 
     ''' </summary>
@@ -161,6 +175,9 @@ Public Class EventLogsX
         sourceList.AddRange(AddingSourceList)
     End Sub ' AddSource
 
+    ''' <summary>
+    ''' ReRead Logs and Sources from machine.
+    ''' </summary>
     Public Sub Refresh()
         SourceList.Clear : LogList = EventLogX.GetEventLogs(Me)
     End Sub
@@ -200,6 +217,8 @@ Public Class EventLogsX
 
         Catch ex As Exception
 
+            Debug.Print ("CreateSource: " & ex.Message)
+
             ' EventLog.CreateEventSource(logName, standardSource) throw error
             If MyErrorCount = -1 Then Return Nothing 
 
@@ -210,18 +229,23 @@ Public Class EventLogsX
 
         Try
 
+            Dim MyRegListOfOwnSources = CType(RegRootKey.GetValue("OwnSources"), Array).Cast(Of String)().ToList()
+
             ' If successfully written in EventLog, then add (only new) Log to "OwnLogs" in Registry
             If Not LogState.EXISTS Then
+
                 Dim MyRegListOfOwnLogs = CType(RegRootKey.GetValue("OwnLogs"), Array).Cast(Of String)().ToList()
                 MyRegListOfOwnLogs.Add(logName)
                 RegRootKey.SetValue("OwnLogs", MyRegListOfOwnLogs.ToArray)
+
+                ' Add standard source to "OwnSources" in Registry
+                MyRegListOfOwnSources.Add(logName)
+
             End If
 
-            ' Add new Source and standard source to "OwnSources" in Registry
-            Dim MyRegListOfOwnSources = CType(RegRootKey.GetValue("OwnSources"), Array).Cast(Of String)().ToList()
-            MyRegListOfOwnSources.Add(sourceName)
-            MyRegListOfOwnSources.Add(logName)
-            RegRootKey.SetValue("OwnSources", MyRegListOfOwnSources.ToArray)
+                ' Add new Source "OwnSources" in Registry
+                MyRegListOfOwnSources.Add(sourceName)
+                RegRootKey.SetValue("OwnSources", MyRegListOfOwnSources.ToArray)
 
             ' Re-Read Logs and Sources
             Call Refresh
@@ -405,9 +429,10 @@ Public Class EventLogsX
 
                 Select Case LogState.EXISTS
                     Case True
-                                If LogState.IS_PROTECTED_FULLY Then Return False
+                                If  LogState.IS_PROTECTED_FULLY Then Return False
                     Case False
                                 If Not LogState.CHARSET_FITS Then Return False
+                             If   LogState.SHORT_NAME_EXISTS Then Return False
                 End Select
 
                 Return True
@@ -467,23 +492,29 @@ Public Class EventLogsX
     ''' </summary>
     Private Function SetLogState(logName As String) As StateTypeLog
 
-                    If Not  LogList.Find(Function(L) L.Name.ToLower = logName.ToLower) Is Nothing AndAlso _
+                    If LogList.Exists(Function(L) L.Name.ToLower = logName.ToLower) AndAlso _
                             EventLog.Exists(logName) Then _
         _LogState.EXISTS = True Else _LogState.EXISTS = False
 
+                    If LogList.Exists(Function(L) L.ShortName.ToLower = Left(logName, 8).ToLower) Then
+        _LogState.SHORT_NAME_EXISTS = True 
+                    Else 
+        _LogState.SHORT_NAME_EXISTS = False
+                    End If
+
         _LogState.CHARSET_FITS = New Regex("^[a-zA-Z]{1,1}[a-zA-Z_0-9_\.\s]{4,}$").IsMatch(logName)
 
-                     If Not LogList.Find(Function(L) L.Name.ToLower = logName.ToLower And L.Owner = OwnerEnum.OWN) Is Nothing Then _
+                     If LogList.Exists(Function(L) L.Name.ToLower = logName.ToLower And L.Owner = OwnerEnum.OWN) Then _
         _LogState.IS_OWN = True Else _LogState.IS_OWN = False
 
-                    If Not ThisProtectedLogs.Find(Function(Str) Str.ToLower = logName.ToLower) Is Nothing Then _
+                    If ThisProtectedLogs.Exists(Function(Str) Str.ToLower = logName.ToLower) Then _
         _Logstate.IS_PROTECTED = True Else _LogState.IS_PROTECTED = False
 
-                    If Not ThisProtectedLogsFull.Find(Function(Str) Str.ToLower = logName.ToLower) Is Nothing Then _
+                    If ThisProtectedLogsFull.Exists(Function(Str) Str.ToLower = logName.ToLower) Then _
         _Logstate.IS_PROTECTED_FULLY = True Else _LogState.IS_PROTECTED_FULLY = False
 
-                    If SourceList.Find(Function (S) S.Parent.Name.ToLower = logName.ToLower And S.Owner = OwnerEnum.OTHER) Is Nothing AndAlso LogState.EXISTS Then _
-        _Logstate.CHILDS_ARE_OWN = True Else _Logstate.CHILDS_ARE_OWN = False
+                    If SourceList.Exists(Function (S) S.Parent.Name.ToLower = logName.ToLower And S.Owner = OwnerEnum.OTHER) AndAlso LogState.EXISTS Then _
+        _Logstate.CHILDS_ARE_OWN = False Else _Logstate.CHILDS_ARE_OWN = True
 
         Return LogState
 
@@ -497,20 +528,20 @@ Public Class EventLogsX
             If sourceName Is Nothing Then sourceName = ""
             If    logName Is Nothing Then    logName = ""
 
-                        If Not  SourceList.Find(Function(S) S.Name.ToLower = sourceName.ToLower) Is Nothing AndAlso _
+                        If SourceList.Exists(Function(S) S.Name.ToLower = sourceName.ToLower) AndAlso _
                                 EventLog.SourceExists(sourceName) Then _
             _SourceState.EXISTS = True Else _SourceState.EXISTS = False
 
             _SourceState.CHARSET_FITS = New Regex("^[a-zA-Z]{1,1}[a-zA-Z_0-9_\.\s]{4,}$").IsMatch(sourceName)
 
-                         If Not SourceList.Find(Function(S) S.Name.ToLower = sourceName.ToLower And S.Owner = OwnerEnum.OWN) Is Nothing Then _
+                         If SourceList.Exists(Function(S) S.Name.ToLower = sourceName.ToLower And S.Owner = OwnerEnum.OWN) Then _
             _SourceState.IS_OWN = True Else _SourceState.IS_OWN = False
 
         Try
 
-            If Not ThisProtectedLogsFull.Find(Function(Str)   Str.ToLower = LogList.Find( _
-                                                    Function (L) L.Name.ToLower = SourceList.Find( _
-                                                    Function (S) S.Name.ToLower = sourceName.ToLower).Parent.Name.ToLower).Name.ToLower) Is Nothing Then 
+            If ThisProtectedLogsFull.Exists(Function(Str)   Str.ToLower = LogList.Find( _
+                                            Function (L) L.Name.ToLower = SourceList.Find( _
+                                            Function (S) S.Name.ToLower = sourceName.ToLower).Parent.Name.ToLower).Name.ToLower) Then 
                 _SourceState.IS_PROTECTED = True 
             Else 
                 _SourceState.IS_PROTECTED = False
@@ -545,11 +576,11 @@ Public Class EventLogsX
     ''' </summary>
     Private Sub InitReg()
 
-        If RegRootKey.GetValueNames.ToList.Find(Function(V) V.ToLower = "OwnLogs".ToLower) Is Nothing Then _
-           RegRootKey.SetValue("OwnLogs", New String() {}, RegistryValueKind.MultiString)
+        If Not RegRootKey.GetValueNames.ToList.Exists(Function(V) V.ToLower = "OwnLogs".ToLower) Then _
+               RegRootKey.SetValue("OwnLogs", New String() {}, RegistryValueKind.MultiString)
 
-        If RegRootKey.GetValueNames.ToList.Find(Function(V) V.ToLower = "OwnSources".ToLower) Is Nothing Then _
-           RegRootKey.SetValue("OwnSources", New String() {}, RegistryValueKind.MultiString)
+        If Not RegRootKey.GetValueNames.ToList.Exists(Function(V) V.ToLower = "OwnSources".ToLower) Then _
+               RegRootKey.SetValue("OwnSources", New String() {}, RegistryValueKind.MultiString)
 
     End Sub
 
