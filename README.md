@@ -1,4 +1,4 @@
-# Download Bins
+# Download Bins (V 1.5.1)
 Download MSI: http://repository.thats.im/projects/EventLogWizard/EventLogXSetup.msi
 
 Download MSI as RAR: http://repository.thats.im/projects/EventLogWizard/EventLogXSetup.rar
@@ -101,7 +101,7 @@ You can refer/link all action buttons. (See example WinForm: "FrmThinCLient"). A
 FW 4.6.1
 
 4.	Latest releases
-V1.4.3
+V1.5.1
 
 # Build and Test
 As descriped below, it was not my intention to have a class which appears in top proper and common way. Events and some clean structure are missing to reach that target. 
@@ -114,4 +114,4 @@ Thats a simple way to adapt any change requests. All assumpation logic is focuse
 If you want to use the objects (logs/sources), you need to use LINQ, cus I placed all collection stuff in generic lists, which are most time public/friend.
 
 # Contribute
-Just hire me.
+Just ask. Every experience in teamwork is more than welcome.

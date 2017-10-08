@@ -594,7 +594,6 @@ Public Class EventLogsX
 
 
     Public Class EventLogX
-        'Inherits EventLog
 
         Private ThisEventLog As EventLog
 
