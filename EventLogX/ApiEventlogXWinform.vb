@@ -68,7 +68,7 @@ Public Class ApiEventlogXWinform
 
         Logs.TxtLogSelectedText = selectedLog
         Logs.TxtLogWrittenText = selectedLog
-    
+
         Sources.TxtSourceSelected = selectedSource
         Sources.TxtSourceWritten = selectedSource
 
@@ -310,24 +310,26 @@ Public Class ApiEventlogXWinform
 
             Protected Friend Sub SetDataSources()
 
+                On Error GoTo 0
+
                 If Not LstLogsOwn Is Nothing Then
                     LstLogsOwn.DataSource = Parent.MyEventLogs.GetLogs(EventLogsX.OwnerEnum.OWN)
-                    LstLogsOwn.ValueMember = "Log"
+                    LstLogsOwn.ValueMember = "Name"
                 End If
 
                 If Not LstLogsOther Is Nothing Then
                     LstLogsOther.DataSource = Parent.MyEventLogs.GetLogs(EventLogsX.OwnerEnum.OTHER)
-                    LstLogsOther.ValueMember = "Log"
+                    LstLogsOther.ValueMember = "Name"
                 End If
 
                 If Not CmbLogsOwn Is Nothing Then
                     CmbLogsOwn.DataSource = Parent.MyEventLogs.GetLogs(EventLogsX.OwnerEnum.OTHER)
-                    CmbLogsOwn.ValueMember = "Log"
+                    CmbLogsOwn.ValueMember = "Name"
                 End If
 
                 If Not CmbLogsOther Is Nothing Then
                     CmbLogsOther.DataSource = Parent.MyEventLogs.GetLogs(EventLogsX.OwnerEnum.OTHER)
-                    CmbLogsOther.ValueMember = "Log"
+                    CmbLogsOther.ValueMember = "Name"
                 End If
 
             End Sub

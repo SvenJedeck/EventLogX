@@ -358,9 +358,10 @@ Module ModStart
                         If MyActionState.LOG_TO_OTHER Then
                             ThisSelectedLog.SetOwner(EventLogsX.OwnerEnum.OTHER, True)
                             Console.BackgroundColor = ConsoleColor.DarkGreen
-                            Console.WriteLine("{0,-80}", "Log """ & ThisSelectedLog.Name & """ new owner = ""OWN"". Press Enter to continue")
+                            Console.WriteLine("{0,-80}", "Log """ & ThisSelectedLog.Name & """ new owner = ""OTHER"". Press Enter to continue")
                             Console.ReadLine
                             Console.WriteLine("")
+                            Call ShowRoot : Exit Sub                                
 
                         Else
                             Console.BackgroundColor = ConsoleColor.DarkRed
@@ -375,9 +376,10 @@ Module ModStart
                         If MyActionState.LOG_TO_OWN Then
                             ThisSelectedLog.SetOwner(EventLogsX.OwnerEnum.OWN, True)
                             Console.BackgroundColor = ConsoleColor.DarkGreen
-                            Console.WriteLine("{0,-80}", "Log """ & ThisSelectedLog.Name & """ new owner = ""OTHER"". Press Enter to continue")
+                            Console.WriteLine("{0,-80}", "Log """ & ThisSelectedLog.Name & """ new owner = ""OWN"". Press Enter to continue")
                             Console.ReadLine
                             Console.WriteLine("")
+                            Call ShowRoot : Exit Sub                                
                         Else
                             Console.BackgroundColor = ConsoleColor.DarkRed
                             Console.WriteLine("{0,-80}", "No valid action typed in. Press Enter to go on.")
@@ -394,6 +396,7 @@ Module ModStart
                             Console.WriteLine("{0,-80}", "Source """ & ThisSelectedSource.Name & """ new owner = ""OTHER"". Press Enter to continue")
                             Console.ReadLine
                             Console.WriteLine("")
+                            Call ShowRoot : Exit Sub                                
                         Else
                             Console.BackgroundColor = ConsoleColor.DarkRed
                             Console.WriteLine("{0,-80}", "No valid action typed in. Press Enter to go on.")
@@ -409,6 +412,7 @@ Module ModStart
                             Console.WriteLine("{0,-80}", "Source """ & ThisSelectedSource.Name & """ new owner = ""OWN"". Press Enter to continue")
                             Console.ReadLine
                             Console.WriteLine("")
+                            Call ShowRoot : Exit Sub                                
                         Else
                             Console.BackgroundColor = ConsoleColor.DarkRed
                             Console.WriteLine("{0,-80}", "No valid action typed in. Press Enter to go on.")
