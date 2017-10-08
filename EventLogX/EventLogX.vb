@@ -141,13 +141,12 @@ Public Class EventLogsX
     End Function ' GetLogs
 
     Public Function LogExists(evtLog As EventLog) As Boolean
-        Return LogList.Exists(Function (L) L.Log = evtLog.Log)
+        Return LogList.Exists(Function (L) L.Name = evtLog.Log)
     End Function ' GetLogs
 
     Public Function LogExists(evtLogX As EventLogX) As Boolean
         Return LogList.Exists(Function (L) L Is evtLogX)
     End Function ' GetLogs
-
 
     ''' <summary>
     '''  Get all EventLog Sources of local machine 
@@ -271,7 +270,6 @@ Public Class EventLogsX
 
     End Function  ' Function CreateSource
 
-
     ''' <summary>
     ''' Delete logs and sources. Checks before, if all sources are OWN.
     ''' </summary>
@@ -320,7 +318,6 @@ Public Class EventLogsX
         Return True
 
     End Function
-
 
     ''' <summary>
     ''' Delete 1 single source, remove from registry and re-read logs/sources.
@@ -597,8 +594,9 @@ Public Class EventLogsX
 
 
     Public Class EventLogX
-        Inherits EventLog
+        'Inherits EventLog
 
+        Private ThisEventLog As EventLog
 
         Public ReadOnly Property Parent As EventLogsX
         Public ReadOnly Property Name As String
@@ -656,9 +654,10 @@ Public Class EventLogsX
         End Property ' Owner As OwnerEnum
 
         Public Sub New(logName As String, parent As EventLogsX)
-            MyBase.New(logName)
 
-            _Name = Log
+            ThisEventLog = New EventLog(logName)
+
+            _Name = ThisEventLog.Log
             _ShortName = Left(Name, 8)
             _Parent = parent
             _Owner = GetOwnerState()
