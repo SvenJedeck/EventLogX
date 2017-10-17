@@ -28,7 +28,10 @@ Public Class EventLogsX
         Public SOURCE_TO_OTHER As Boolean
         Public SOURCE_TO_OWN As Boolean
     End Structure
-        Public ReadOnly Property ActionState As ActionTypes
+    ''' <summary>
+    ''' Represents the assumptions of all possible actions. Needs LogState and SourceState to conclude about ACTIONSTATES
+    ''' </summary>
+    Public ReadOnly Property ActionState As ActionTypes
 
     Public Structure StateTypeLog
         Public       CHARSET_FITS As Boolean
@@ -38,8 +41,12 @@ Public Class EventLogsX
         Public             IS_OWN As Boolean
         Public       IS_PROTECTED As Boolean
         Public IS_PROTECTED_FULLY As Boolean
-    End Structure 
-        Public ReadOnly Property LogState As StateTypeLog
+    End Structure
+    ''' <summary>
+    ''' Set of bits, which represents the current log state.
+    ''' </summary>
+    ''' <remarks>This property only shows the current log states. It does not evaluate them. For example, the current log is a member of the FULLY_PROTECED list. Then this membership is displayed here. It is not reported here that this log can not be deleted. This rating performs the ActionState property.</remarks>
+    Public ReadOnly Property LogState As StateTypeLog
 
     Public Structure StateTypeSource
         Public       CHARSET_FITS As Boolean
@@ -48,8 +55,11 @@ Public Class EventLogsX
         Public             IS_OWN As Boolean
         Public       IS_PROTECTED As Boolean
         Public REGKEY_LENGTH_FITS As Boolean
-    End Structure 
-        Public ReadOnly Property SourceState As StateTypeSource
+    End Structure
+    ''' <summary>
+    ''' Set of bits, which represents the current source state.
+    ''' </summary>
+    Public ReadOnly Property SourceState As StateTypeSource
 
     Public Structure GeneralState
         Public LogState As StateTypeLog
@@ -87,7 +97,7 @@ Public Class EventLogsX
     Protected ReadOnly Property RegRootKey As RegistryKey = Registry.LocalMachine.OpenSubKey("SYSTEM\CurrentControlSet\Services\Eventlog\", True)
 
     ''' <summary>
-    ''' List of all EventLogX at the local machine. Note: Logs have unique name per machine. But in MSDN it is said, that a log cant have same name as source. As tested (Win10) this is wrong. They can.
+    ''' List of all EventLogX at the local machine. Note: Logs have unique short name (8 digits) per machine.
     ''' </summary>
     ''' <returns><see cref=" List(Of EventLogX)"/> </returns>
     Protected Property LogList As New List(Of EventLogX)
@@ -136,16 +146,25 @@ Public Class EventLogsX
         Return LogList.Find(Function(L) L.Name.ToLower = logName.ToLower)
     End Function ' GetLogs
 
+    ''' <summary>
+    ''' Checks by given Name (Str) if existing.
+    ''' </summary>
     Public Function LogExists(logName As String) As Boolean
-        Return LogList.Exists(Function (L) L.Name.ToLower = logName.ToLower)
+        Return LogList.Exists(Function(L) L.Name.ToLower = logName.ToLower)
     End Function ' GetLogs
 
+    ''' <summary>
+    ''' Checks by given .NET EventLog if existing.
+    ''' </summary>
     Public Function LogExists(evtLog As EventLog) As Boolean
-        Return LogList.Exists(Function (L) L.Name = evtLog.Log)
+        Return LogList.Exists(Function(L) L.Name = evtLog.Log)
     End Function ' GetLogs
 
+    ''' <summary>
+    ''' Checks by given <see cref="EventLogX"/> if existing
+    ''' </summary>
     Public Function LogExists(evtLogX As EventLogX) As Boolean
-        Return LogList.Exists(Function (L) L Is evtLogX)
+        Return LogList.Exists(Function(L) L Is evtLogX)
     End Function ' GetLogs
 
     ''' <summary>
@@ -186,7 +205,7 @@ Public Class EventLogsX
     ''' <summary>
     ''' ReRead Logs and Sources from machine.
     ''' </summary>
-    Public Sub Refresh()
+    Public Sub Requery()
         SourceList.Clear : LogList = EventLogX.GetEventLogs(Me)
     End Sub
 
@@ -256,7 +275,7 @@ Public Class EventLogsX
                 RegRootKey.SetValue("OwnSources", MyRegListOfOwnSources.ToArray)
 
             ' Re-Read Logs and Sources
-            Call Refresh
+            Call Requery
 
             MyReturn = True
 
@@ -305,12 +324,12 @@ Public Class EventLogsX
             RegRootKey.SetValue("OwnSources", MyRegListOfOwnSources.ToArray)
 
             ' Re-Read Logs and Sources
-            Call Refresh
+            Call Requery
 
         Catch ex As Exception
 
             ' Re-Read Logs and Sources
-            Call Refresh
+            Call Requery
             Return False
 
         End Try
@@ -337,7 +356,7 @@ Public Class EventLogsX
             RegRootKey.SetValue("OwnSources", MyRegListOfOwnSources.ToArray)
         
             ' Re-Read Logs and Sources
-            Call Refresh
+            Call Requery
 
         Catch ex As Exception
             Return False
@@ -397,83 +416,104 @@ Public Class EventLogsX
 
     End Function
 #Region "Validate help functions"
-            Private Function ValidateLogDelete(logName As String, sourceName As String) As Boolean
+    ''' <summary>
+    ''' Validates, if action LOG_DELETE can be performed.
+    ''' </summary>
+    Private Function ValidateLogDelete(logName As String, sourceName As String) As Boolean
 
-                If Not          LogState.EXISTS Then Return False
-                If Not  LogState.CHILDS_ARE_OWN Then Return False
-                If Not          LogState.IS_OWN Then Return False
-                If        LogState.IS_PROTECTED Then Return False
+        If Not LogState.EXISTS Then Return False
+        If Not LogState.CHILDS_ARE_OWN Then Return False
+        If Not LogState.IS_OWN Then Return False
+        If LogState.IS_PROTECTED Then Return False
 
-                Return True        
+        Return True
 
-            End Function
+    End Function
 
-            Private Function ValidateLogToOther(logName As String, sourceName As String) As Boolean
+    ''' <summary>
+    ''' Validates, if action LOG_TO_OTHER can be performed.
+    ''' </summary>
+    Private Function ValidateLogToOther(logName As String, sourceName As String) As Boolean
 
-                If Not LogState.EXISTS Then Return False
-                If Not LogState.IS_OWN Then Return False
+        If Not LogState.EXISTS Then Return False
+        If Not LogState.IS_OWN Then Return False
 
-                Return True        
+        Return True
 
-            End Function
+    End Function
 
-            Private Function ValidateLogToOwn(logName As String, sourceName As String) As Boolean
+    ''' <summary>
+    ''' Validates, if action LOG_TO_OWN can be performed.
+    ''' </summary>
+    Private Function ValidateLogToOwn(logName As String, sourceName As String) As Boolean
 
-                If Not       LogState.EXISTS Then Return False
-                If     LogState.IS_PROTECTED Then Return False
-                If           LogState.IS_OWN Then Return False
-                
-                Return True 
+        If Not LogState.EXISTS Then Return False
+        If LogState.IS_PROTECTED Then Return False
+        If LogState.IS_OWN Then Return False
 
-            End Function
+        Return True
 
-            Private Function ValidateSourceCreate(logName As String, sourceName As String) As Boolean
+    End Function
 
-                If       SourceState.EXISTS             Then Return False
-                If Not   SourceState.CHARSET_FITS       Then Return False
-                If Not   SourceState.REGKEY_LENGTH_FITS Then Return False
+    ''' <summary>
+    ''' Validates, if action SOURCE_CREATE can be performed.
+    ''' </summary>
+    Private Function ValidateSourceCreate(logName As String, sourceName As String) As Boolean
 
-                Select Case LogState.EXISTS
-                    Case True
-                                If  LogState.IS_PROTECTED_FULLY Then Return False
-                    Case False
-                                If Not LogState.CHARSET_FITS Then Return False
-                             If   LogState.SHORT_NAME_EXISTS Then Return False
-                End Select
+        If SourceState.EXISTS Then Return False
+        If Not SourceState.CHARSET_FITS Then Return False
+        If Not SourceState.REGKEY_LENGTH_FITS Then Return False
 
-                Return True
+        Select Case LogState.EXISTS
+            Case True
+                If LogState.IS_PROTECTED_FULLY Then Return False
+            Case False
+                If Not LogState.CHARSET_FITS Then Return False
+                If LogState.SHORT_NAME_EXISTS Then Return False
+        End Select
 
-            End Function
+        Return True
 
-            Private Function ValidateSourceDelete(logName As String, sourceName As String) As Boolean
+    End Function
 
-                If Not  SourceState.EXISTS              Then Return False
-                If Not  SourceState.IS_OWN              Then Return False
-                If      SourceState.IS_STANDARD_SOURCE  Then Return False
-                If      SourceState.IS_PROTECTED        Then Return False
+    ''' <summary>
+    ''' Validates, if action SOURCE_DELETE can be performed.
+    ''' </summary>
+    Private Function ValidateSourceDelete(logName As String, sourceName As String) As Boolean
 
-                Return True
+        If Not SourceState.EXISTS Then Return False
+        If Not SourceState.IS_OWN Then Return False
+        If SourceState.IS_STANDARD_SOURCE Then Return False
+        If SourceState.IS_PROTECTED Then Return False
 
-            End Function
+        Return True
 
-            Private Function ValidateSourceToOther(logName As String, sourceName As String) As Boolean
+    End Function
 
-                If Not SourceState.EXISTS Then Return False
-                If Not SourceState.IS_OWN Then Return False
+    ''' <summary>
+    ''' Validates, if action SOURCE_TO_OTHER can be performed.
+    ''' </summary>
+    Private Function ValidateSourceToOther(logName As String, sourceName As String) As Boolean
 
-                Return True
+        If Not SourceState.EXISTS Then Return False
+        If Not SourceState.IS_OWN Then Return False
 
-            End Function
+        Return True
 
-            Private Function ValidateSourceToOwn(logName As String, sourceName As String) As Boolean
+    End Function
 
-                If Not  SourceState.EXISTS          Then Return False
-                If      SourceState.IS_OWN          Then Return False
-                If      SourceState.IS_PROTECTED    Then Return False
-                
-                Return True
+    ''' <summary>
+    ''' Validates, if action SOURCE_TO_OWN can be performed.
+    ''' </summary>
+    Private Function ValidateSourceToOwn(logName As String, sourceName As String) As Boolean
 
-            End Function
+        If Not SourceState.EXISTS Then Return False
+        If SourceState.IS_OWN Then Return False
+        If SourceState.IS_PROTECTED Then Return False
+
+        Return True
+
+    End Function
 #End Region ' "Validate help functions"
 
 
@@ -597,13 +637,13 @@ Public Class EventLogsX
 
         Private ThisEventLog As EventLog
 
-        Public ReadOnly Property Parent As EventLogsX
-        Public ReadOnly Property Name As String
-        Public ReadOnly Property ShortName As String
+        Public ReadOnly Property        Parent As EventLogsX
+        Public ReadOnly Property          Name As String
+        Public ReadOnly Property     ShortName As String
+        Public ReadOnly Property  ChildSources As List(Of LogSource)
 
         Private _Owner As OwnerEnum
 
-        Public ReadOnly Property ChildSources As List(Of LogSource)
 
         ''' <summary>
         ''' Sets owner state. If <paramref name="withChilds"/> = True, then ownership of refered sources will be changed as well.
@@ -640,7 +680,7 @@ Public Class EventLogsX
                 Next
             End If
 
-        Parent.Refresh
+            Parent.Requery
 
         End Sub
 
@@ -656,12 +696,12 @@ Public Class EventLogsX
 
             ThisEventLog = New EventLog(logName)
 
-            _Name = ThisEventLog.Log
-            _ShortName = Left(Name, 8)
-            _Parent = parent
-            _Owner = GetOwnerState()
+                  _Name = ThisEventLog.Log
+             _ShortName = Left(Name, 8)
+                _Parent = parent
+                 _Owner = GetOwnerState()
 
-            ChildSources = GetSourcesFromReg()
+           ChildSources = GetSourcesFromReg()
 
         End Sub
 
@@ -670,7 +710,7 @@ Public Class EventLogsX
         ''' </summary>
         ''' <param name="parent"></param>
         ''' <returns></returns>
-        Protected Friend Overloads Shared Function GetEventLogs(parent As EventLogsX) As List(Of EventLogX)
+        Protected Friend Shared Function GetEventLogs(parent As EventLogsX) As List(Of EventLogX)
 
             GetEventLogs = New List(Of EventLogX)
 
@@ -682,9 +722,9 @@ Public Class EventLogsX
 
         Private Function GetOwnerState() As OwnerEnum
 
-            If CType(Parent.RegRootKey.GetValue("OwnLogs"), Array).Cast(Of String)().ToList().Find(Function(L) L.ToLower = Me.Name.ToLower) Is Nothing Then Return OwnerEnum.OTHER
+            If CType(Parent.RegRootKey.GetValue("OwnLogs"), Array).Cast(Of String)().ToList().Exists(Function(L) L.ToLower = Me.Name.ToLower) Then Return OwnerEnum.OWN
 
-            Return OwnerEnum.OWN
+            Return OwnerEnum.OTHER
 
         End Function
 
@@ -704,11 +744,10 @@ Public Class EventLogsX
 
         Public Class LogSource
 
-            Public ReadOnly Property Root As EventLogsX
-            Public ReadOnly Property Parent As EventLogX
-            Public ReadOnly Property Name As String
-
-            Public ReadOnly Property Owner As OwnerEnum
+            Public ReadOnly Property    Root As EventLogsX
+            Public ReadOnly Property  Parent As EventLogX
+            Public ReadOnly Property    Name As String
+            Public ReadOnly Property   Owner As OwnerEnum
 
             Public Sub SetOwner(newOwner As OwnerEnum, Optional IsChildMove As Boolean = False)
 
@@ -731,16 +770,16 @@ Public Class EventLogsX
                 Root.RegRootKey.SetValue("OwnSources", MyOwnList.ToArray)
                 _Owner = newOwner
 
-                If Not IsChildMove Then Root.Refresh
+                If Not IsChildMove Then Root.Requery
 
             End Sub
 
             Public Sub New(parent As EventLogX, name As String)
 
                 _Parent = parent
-                _root = parent.Parent
-                _Name = name
-                _Owner = GetOwnerState()
+                  _root = parent.Parent
+                  _Name = name
+                 _Owner = GetOwnerState()
 
             End Sub
             Private Function GetOwnerState() As OwnerEnum

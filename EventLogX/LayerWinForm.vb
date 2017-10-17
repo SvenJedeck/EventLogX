@@ -1,6 +1,6 @@
 ﻿Imports System.Windows.Forms
 
-Public Class ApiEventlogXWinform
+Public Class LayerWinForm
 
     ''' <summary>
     ''' Adjust the confirmation level.
@@ -52,7 +52,7 @@ Public Class ApiEventlogXWinform
         Sources.TxtSourceSelected = selectedSource
         Sources.TxtSourceWritten = ownSourceName
 
-        MyEventLogs.Refresh
+        MyEventLogs.Requery
         Logs.SetDataSources
 
         ConfirmLevel = confirmingLevel
@@ -72,7 +72,7 @@ Public Class ApiEventlogXWinform
         Sources.TxtSourceSelected = selectedSource
         Sources.TxtSourceWritten = selectedSource
 
-        MyEventLogs.Refresh
+        MyEventLogs.Requery
         Logs.SetDataSources
 
         ConfirmLevel = confirmingLevel
@@ -252,13 +252,13 @@ Public Class ApiEventlogXWinform
     End Sub
 
     Private Sub BtnRefresh_Click(sender As Object, e As EventArgs) Handles BtnRefresh.Click
-        MyEventLogs.Refresh
+        MyEventLogs.Requery
         Logs.SetDataSources
     End Sub
 
     Public Class LogLists
 
-            Public Parent As ApiEventlogXWinform
+            Public Parent As LayerWinForm
 
             Public SelectedLog As EventLogsX.EventLogX
             Public CurrentLogName As String
@@ -271,7 +271,7 @@ Public Class ApiEventlogXWinform
             Public WithEvents TxtLogSelectedText As TextBox
             Public WithEvents TxtLogWrittenText As TextBox
 
-            Public Sub New(listOwn As ListBox, listOther As ListBox, prnt As ApiEventlogXWinform)
+            Public Sub New(listOwn As ListBox, listOther As ListBox, prnt As LayerWinForm)
 
                 LstLogsOwn = listOwn
                 LstLogsOther = listOther
@@ -281,7 +281,7 @@ Public Class ApiEventlogXWinform
 
             End Sub
 
-            Public Sub New(listOwn As ListBox, comboOther As ComboBox, prnt As ApiEventlogXWinform)
+            Public Sub New(listOwn As ListBox, comboOther As ComboBox, prnt As LayerWinForm)
                 LstLogsOwn = listOwn
                 CmbLogsOwn = comboOther
                 Parent = prnt
@@ -290,7 +290,7 @@ Public Class ApiEventlogXWinform
 
             End Sub
 
-            Public Sub New(comboOwn As ComboBox, comboOther As ComboBox, prnt As ApiEventlogXWinform)
+            Public Sub New(comboOwn As ComboBox, comboOther As ComboBox, prnt As LayerWinForm)
                 CmbLogsOwn = comboOwn
                 CmbLogsOther = comboOther
                 Parent = prnt
@@ -299,7 +299,7 @@ Public Class ApiEventlogXWinform
 
             End Sub
 
-            Public Sub New(comboOwn As ComboBox, listOther As ListBox, prnt As ApiEventlogXWinform)
+            Public Sub New(comboOwn As ComboBox, listOther As ListBox, prnt As LayerWinForm)
                 CmbLogsOwn = comboOwn
                 LstLogsOther = listOther
                 Parent = prnt
@@ -376,7 +376,7 @@ Public Class ApiEventlogXWinform
 
         Public Class SourceLists
 
-            Public Parent As ApiEventlogXWinform
+            Public Parent As LayerWinForm
 
             Public CurrentSourceName As String
 
@@ -390,25 +390,25 @@ Public Class ApiEventlogXWinform
             Public WithEvents TxtSourceSelected As TextBox
             Public WithEvents TxtSourceWritten As TextBox
 
-            Public Sub New(listOwn As ListBox, listOther As ListBox, prnt As ApiEventlogXWinform)
+            Public Sub New(listOwn As ListBox, listOther As ListBox, prnt As LayerWinForm)
                 LstSourcesOwn = listOwn
                 LstSourcesOther = listOther
                 Parent = prnt
             End Sub
 
-            Public Sub New(listOwn As ListBox, comboOther As ComboBox, prnt As ApiEventlogXWinform)
+            Public Sub New(listOwn As ListBox, comboOther As ComboBox, prnt As LayerWinForm)
                 LstSourcesOwn = listOwn
                 CmbSourcesOther = comboOther 
                 Parent = prnt
             End Sub
 
-            Public Sub New(comboOwn As ComboBox, comboOther As ComboBox, prnt As ApiEventlogXWinform)
+            Public Sub New(comboOwn As ComboBox, comboOther As ComboBox, prnt As LayerWinForm)
                 CmbSourcesOwn = comboOwn
                 CmbSourcesOther = comboOther
                 Parent = prnt
             End Sub
 
-            Public Sub New(comboOwn As ComboBox, listOther As ListBox, prnt As ApiEventlogXWinform)
+            Public Sub New(comboOwn As ComboBox, listOther As ListBox, prnt As LayerWinForm)
                 CmbSourcesOwn = comboOwn
                 LstSourcesOther = listOther
                 Parent = prnt

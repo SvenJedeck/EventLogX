@@ -66,7 +66,7 @@ Module ModStart
 
     Private Sub ShowRoot()
 
-        ThisEventLogs.Refresh
+        ThisEventLogs.Requery
 
            ThisSelectedLog = Nothing
         ThisSelectedSource = Nothing
@@ -136,7 +136,7 @@ Module ModStart
            ThisSelectedLog = Nothing
         ThisSelectedSource = Nothing
 
-        ThisEventLogs.Refresh
+        ThisEventLogs.Requery
 
         Console.BackgroundColor = ConsoleColor.DarkGreen
         Console.WriteLine("{0,-80}", "Select Log")

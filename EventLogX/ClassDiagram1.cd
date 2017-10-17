@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="EventLogX.EventLogsX">
+    <Position X="0.5" Y="0.5" Width="3" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="EventLogX.EventLogsX.OwnerEnum" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>EventLogX.vb</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Struct Name="EventLogX.EventLogsX.ActionTypes" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>EventLogX.vb</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="EventLogX.EventLogsX.StateTypeLog" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>EventLogX.vb</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="EventLogX.EventLogsX.StateTypeSource" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>EventLogX.vb</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="EventLogX.EventLogsX.GeneralState" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>EventLogX.vb</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Enum Name="EventLogX.EventLogsX.Actions" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>EventLogX.vb</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Class Name="EventLogX.EventLogsX.EventLogX">
+        <Compartments>
+          <Compartment Name="Nested Types" Collapsed="false" />
+        </Compartments>
+        <NestedTypes>
+          <Class Name="EventLogX.EventLogsX.EventLogX.LogSource">
+            <TypeIdentifier>
+              <NewMemberFileName>EventLogX.vb</NewMemberFileName>
+            </TypeIdentifier>
+          </Class>
+        </NestedTypes>
+        <TypeIdentifier>
+          <NewMemberFileName>EventLogX.vb</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AgACBlQIABCgEAAIAUECAAAogACSIBAABgAAIAgAAAA=</HashCode>
+      <FileName>EventLogX.vb</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EventLogX.LayerWinForm">
+    <Position X="4.5" Y="0.5" Width="3.25" />
+    <NestedTypes>
+      <Enum Name="EventLogX.LayerWinForm.ConfirmLevelList" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>LayerWinForm.vb</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Enum Name="EventLogX.LayerWinForm.ControlType" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>LayerWinForm.vb</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Class Name="EventLogX.LayerWinForm.LogLists" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>LayerWinForm.vb</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="EventLogX.LayerWinForm.SourceLists" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>LayerWinForm.vb</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAgIAA4AAAABgAGAAAAAIAABAAUsEAAAQQAABEQAAA=</HashCode>
+      <FileName>LayerWinForm.vb</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

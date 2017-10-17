@@ -1,13 +1,13 @@
 ﻿Public Class FrmThinClient
 
-    Private ThisEv As ApiEventlogXWinform
+    Private ThisEv As LayerWinForm
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles Me.Load
 
-        ThisEv = New ApiEventlogXWinform(Me, _
+        ThisEv = New LayerWinForm(Me, _
                                          LstLogsOwn, LstLogsOther, LstSourcesOwn, LstSourcesOther, _
                                          TxtLogName, TxtSourceName, _
-                                         ApiEventlogXWinform.ConfirmLevelList.DEL_ALL_SWITCH_ALL_CREATE_ALL) _
+                                         LayerWinForm.ConfirmLevelList.DEL_ALL_SWITCH_ALL_CREATE_ALL) _
                                                                        With { _
                                                                                     .BtnDelLog = BtnDelLog, _
                                                                                  .BtnDelSource = BtnDelSource, _
@@ -18,6 +18,8 @@
                                                                                .BtnSourceToOwn = BtnSourceToOwn , _
                                                                                    .BtnRefresh = BtnRefresh _
                                                                             }
+
+
    End Sub
 
 End Class
