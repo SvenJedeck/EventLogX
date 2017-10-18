@@ -2,7 +2,7 @@
 
 This code just deletes or creates EventLogs and their Sources. Nothing more, but this in a good and safe way.
 
-### [Please take a look at Wiki](https://github.com/sophistson/EventLogX/wiki)
+### Please take a look at [Wiki](https://github.com/sophistson/EventLogX/wiki)
 
 ### Download Bins (V 1.5.1)
 Download MSI: http://repository.thats.im/projects/EventLogWizard/EventLogXSetup.msi  
